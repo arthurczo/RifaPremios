@@ -37,7 +37,7 @@ Este projeto utiliza uma stack moderna baseada em React e Next.js, com backend i
 ###  Deploy & Infraestrutura
 
 * **Vercel** — Deploy do frontend e API
-* **Railway / Supabase** — Banco de dados e backend services
+* **Mysql** — Banco de dados e backend services
 * **Cloudinary** — Armazenamento e otimização de imagens
 
 ---
@@ -64,20 +64,6 @@ npm run dev
 ```
 
 Acesse: http://localhost:3000
-
----
-
-##  Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-DATABASE_URL=
-NEXTAUTH_SECRET=
-NEXTAUTH_URL=
-STRIPE_SECRET_KEY=
-CLOUDINARY_URL=
-```
 
 ---
 
@@ -108,7 +94,7 @@ CLOUDINARY_URL=
 
 O deploy pode ser feito facilmente via:
 
-* **Vercel** (recomendado)
+* **Vercel** 
 * **Railway** ou **Supabase** (banco de dados)
 
 ---
