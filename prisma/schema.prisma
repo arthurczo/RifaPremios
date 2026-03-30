@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ═══════════════════════════════════════
+// MODELS
+// ═══════════════════════════════════════
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  phone         String?
+  cpf           String?   @unique
+  password      String
+  isAdmin       Boolean   @default(false)
+  isAffiliate   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  orders        Order[]
+  roletas       CustomerRoleta[]
+  
+  @@map("users")
+}
+
+model Campaign {
+  id              String    @id @default(cuid())
+  name            String
+  slug            String    @unique
+  description     String    @db.Text
+  image           String?
+  status          CampaignStatus @default(ACTIVE)
+  price           Decimal   @db.Decimal(10, 2)
+  totalNumbers    Int
+  soldNumbers     Int       @default(0)
+  pendingNumbers  Int       @default(0)
+  minPurchase     Int       @default(1)
+  maxPurchase     Int       @default(100)
+  drawDate        DateTime?
+  roletaEnabled   Boolean   @default(false)
+  roletaRules     Json?     // {"100":1, "200":3, "300":9}
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  orders          Order[]
+  roletas         CustomerRoleta[]
+  
+  @@map("campaigns")
+}
+
+enum CampaignStatus {
+  ACTIVE
+  PAUSED
+  FINISHED
+}
+
+model Order {
+  id              String    @id @default(cuid())
+  userId          String
+  campaignId      String
+  code            String    @unique
+  quantity        Int
+  totalAmount     Decimal   @db.Decimal(10, 2)
+  discountAmount  Decimal?  @db.Decimal(10, 2)
+  status          OrderStatus @default(PENDING)
+  numbers         Json      // ["0001", "0002", ...]
+  paymentMethod   String?
+  paymentId       String?
+  pixCode         String?   @db.Text
+  expiresAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  user            User      @relation(fields: [userId], references: [id])
+  campaign        Campaign  @relation(fields: [campaignId], references: [id])
+  roletas         CustomerRoleta[]
+  
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  EXPIRED
+}
+
+model Prize {
+  id          String    @id @default(cuid())
+  name        String
+  type        PrizeType
+  value       Decimal   @db.Decimal(10, 2)
+  probability Decimal   @db.Decimal(5, 2) // 0-100
+  color       String    @default("#FFD700")
+  icon        String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  
+  spins       RoletaSpin[]
+  
+  @@map("prizes")
+}
+
+enum PrizeType {
+  DISCOUNT_PERCENT
+  DISCOUNT_FIXED
+  FREE_NUMBERS
+  NONE
+}
+
+model CustomerRoleta {
+  id          String    @id @default(cuid())
+  userId      String
+  orderId     String
+  campaignId  String
+  quantity    Int       // Total de roletas ganhas
+  used        Int       @default(0)
+  available   Int       // Roletas disponíveis
+  prizesWon   Json?     // Array de IDs dos prêmios
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  
+  user        User      @relation(fields: [userId], references: [id])
+  order       Order     @relation(fields: [orderId], references: [id])
+  campaign    Campaign  @relation(fields: [campaignId], references: [id])
+  spins       RoletaSpin[]
+  
+  @@map("customer_roletas")
+}
+
+model RoletaSpin {
+  id                Int      @id @default(autoincrement())
+  customerRoletaId  String
+  prizeId           String
+  spinDate          DateTime @default(now())
+  
+  customerRoleta    CustomerRoleta @relation(fields: [customerRoletaId], references: [id])
+  prize             Prize          @relation(fields: [prizeId], references: [id])
+  
+  @@map("roleta_spins")
+}
