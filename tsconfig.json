@@ -18,6 +18,7 @@
     "jsx": "react-jsx",
     "incremental": true,
     "baseUrl": ".",
+    "types": ["node"],
     "plugins": [
       {
         "name": "next"
@@ -38,5 +39,5 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

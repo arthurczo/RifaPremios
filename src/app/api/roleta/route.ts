@@ -1,6 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export async function GET() {
+    try {
+        // TODO: Pegar userId do session
+        const userId = 'b340e2e3-2d33-11f1-9ada-50a13249a336';
+
+        const roletas = await prisma.customerRoleta.findMany({
+            where: {
+                userId,
+                available: { gt: 0 },
+            },
+        });
+
+        const total = roletas.reduce((sum, r) => sum + r.available, 0);
+
+        return NextResponse.json({
+            total,
+            roletas,
+        });
+    } catch (error) {
+        console.error('Erro ao buscar roletas:', error);
+        return NextResponse.json(
+            { error: 'Erro interno' },
+            { status: 500 }
+        );
+    }
+}
+
 export async function POST(req: NextRequest) {
     try {
         const { userId } = await req.json();
