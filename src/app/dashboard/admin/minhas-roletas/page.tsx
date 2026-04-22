@@ -1,54 +1,85 @@
 'use client';
 
-import { Roleta } from '@/components/roleta/Roleta';
 import { useEffect, useState } from 'react';
 
+import { AuthHeader } from '@/components/layout/AuthHeader';
+import { Roleta } from '@/components/roleta/Roleta';
+
+interface SpinHistoryItem {
+  id: string;
+  prizeName: string;
+  prizeType: string;
+  prizeValue: number;
+  createdAt: string;
+}
+
 export default function MinhasRoletasPage() {
-    const [available, setAvailable] = useState(0);
-    const [loading, setLoading] = useState(true);
+  const [available, setAvailable] = useState(0);
+  const [history, setHistory] = useState<SpinHistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // Buscar roletas do usuário
-        async function fetchRoletas() {
-            try {
-                const res = await fetch('/api/roleta/minhas', {
-                    method: 'GET',
-                });
-                const data = await res.json();
-                setAvailable(data.total || 0);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchRoletas();
-    }, []);
-
-    async function handleSpin() {
-        const res = await fetch('/api/roleta/spin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: 'b340e2e3-2d33-11f1-9ada-50a13249a336' }), // TODO: pegar do session
+  useEffect(() => {
+    async function fetchRoletas() {
+      try {
+        const res = await fetch('/api/roleta', {
+          method: 'GET',
         });
-
         const data = await res.json();
-        setAvailable(data.remaining);
-        return data;
+        setAvailable(data.total || 0);
+        setHistory(data.history || []);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-700">
-                <p className="text-white text-2xl">Carregando...</p>
-            </div>
-        );
+    fetchRoletas();
+  }, []);
+
+  async function handleSpin() {
+    const res = await fetch('/api/roleta/spin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Erro ao girar roleta');
     }
 
+    setAvailable(data.remaining);
+    setHistory(data.history || []);
+    return data;
+  }
+
+  if (loading) {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-600 to-indigo-700">
-            <Roleta available={available} onSpin={handleSpin} />
+      <div className="min-h-screen bg-[linear-gradient(180deg,#081224_0%,#0f1d33_42%,#07111f_100%)] px-6 py-10">
+        <div className="mx-auto max-w-7xl">
+          <AuthHeader
+            title="Minhas roletas"
+            subtitle="Consulte os giros disponiveis, acompanhe seu historico e use suas tentativas com uma interface mais clara."
+          />
+          <div className="mt-6 rounded-[2rem] border border-white/10 bg-slate-950/35 p-10 text-center text-white shadow-2xl backdrop-blur">
+            Carregando painel de roletas...
+          </div>
         </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="min-h-screen bg-[linear-gradient(180deg,#081224_0%,#0f1d33_42%,#07111f_100%)] py-10">
+      <div className="mx-auto max-w-7xl">
+        <AuthHeader
+          title="Minhas roletas"
+          subtitle="Consulte os giros disponiveis, acompanhe seu historico e use suas tentativas com uma interface mais clara."
+        />
+        <Roleta available={available} history={history} onSpin={handleSpin} />
+      </div>
+    </div>
+  );
 }
