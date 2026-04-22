@@ -1,9 +1,9 @@
-import { getOrders } from '@/lib/demo-data';
+import { listOrders } from '@/modules/orders/service';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPedidosPage() {
-  const orders = getOrders().slice(0, 30);
+  const orders = (await listOrders()).slice(0, 30);
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-10 text-white">

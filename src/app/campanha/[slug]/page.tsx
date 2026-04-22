@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { CompraBilhetes } from '@/components/campanha/CompraBilhetes';
 import { RoletasSection } from '@/components/campanha/RoletasSection';
-import { getCampaignBySlug } from '@/lib/demo-data';
+import { getCampaignBySlug } from '@/modules/campaigns/service';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +14,7 @@ interface CampaignPageProps {
 export default async function CampaignPage({ params }: CampaignPageProps) {
   const { slug } = await params;
 
-  const campaign = getCampaignBySlug(slug);
+  const campaign = await getCampaignBySlug(slug);
 
   if (!campaign) {
     notFound();

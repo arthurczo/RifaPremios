@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
-import { getCampaigns } from '@/lib/demo-data';
+import { listCampaigns } from '@/modules/campaigns/service';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminCampanhasPage() {
-  const campaigns = getCampaigns().slice().reverse();
+  const campaigns = (await listCampaigns()).slice();
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-10 text-white">

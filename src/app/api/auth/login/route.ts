@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { AUTH_COOKIE_NAME, validateDemoCredentials } from '@/lib/auth';
-import { DEMO_USER_EMAIL } from '@/lib/constants';
+import { getDemoAuthUser } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,15 +13,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Credenciais invalidas' }, { status: 401 });
     }
 
+    const user = await getDemoAuthUser();
     const response = NextResponse.json({
       ok: true,
       user: {
-        email: DEMO_USER_EMAIL,
-        name: 'Usuario Demo',
+        email: user.email,
+        name: user.name,
       },
     });
 
-    response.cookies.set(AUTH_COOKIE_NAME, DEMO_USER_EMAIL, {
+    response.cookies.set(AUTH_COOKIE_NAME, user.email, {
       httpOnly: true,
       sameSite: 'lax',
       path: '/',

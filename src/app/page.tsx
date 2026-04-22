@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { CampanhaCard } from '@/components/campanha/CampanhaCard';
 import { LogoutButton } from '@/components/layout/LogoutButton';
 import { getSessionUser } from '@/lib/auth';
-import { getCampaigns } from '@/lib/demo-data';
+import { listActiveCampaigns } from '@/modules/campaigns/service';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const user = await getSessionUser();
-  const campaigns = getCampaigns().filter((campaign) => campaign.status === 'ACTIVE').slice(0, 6);
+  const campaigns = await listActiveCampaigns();
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(26,48,102,0.92),_#08111f_52%,_#030712_100%)] px-6 py-10 text-white">
@@ -21,10 +21,10 @@ export default async function HomePage() {
                 Plataforma de rifas premiadas
               </span>
               <h1 className="text-4xl font-black tracking-tight md:text-6xl">
-                Rifas e roletas premiadas com uma jornada mais clara.
+                Rifas e roletas premiadas
               </h1>
               <p className="text-lg text-slate-200/90">
-                Explore campanhas ativas, acompanhe suas compras e utilize as roletas disponiveis em uma experiencia mais consistente.
+                Explore campanhas ativas, acompanhe suas compras e utilize as roletas disponiveis.
               </p>
             </div>
 

@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { getCampaignById, getOrdersByCampaign } from '@/lib/demo-data';
+import { getCampaignById } from '@/modules/campaigns/service';
+import { listOrdersByCampaign } from '@/modules/orders/service';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,13 +13,13 @@ interface CampaignDetailPageProps {
 export default async function CampaignDetailPage({ params }: CampaignDetailPageProps) {
   const { id } = await params;
 
-  const campaign = getCampaignById(id);
+  const campaign = await getCampaignById(id);
 
   if (!campaign) {
     notFound();
   }
 
-  const orders = getOrdersByCampaign(id).slice(0, 10);
+  const orders = (await listOrdersByCampaign(id)).slice(0, 10);
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-10 text-white">
