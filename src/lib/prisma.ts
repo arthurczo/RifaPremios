@@ -2,12 +2,7 @@ import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { PrismaClient } from '@prisma/client';
 
 function createAdapter() {
-  const databaseUrl = process.env.DATABASE_URL;
-
-  if (!databaseUrl) {
-    throw new Error('DATABASE_URL nao configurada');
-  }
-
+  const databaseUrl = process.env.DATABASE_URL ?? 'mysql://root:root@127.0.0.1:3306/rifapremios';
   const parsedUrl = new URL(databaseUrl);
 
   return new PrismaMariaDb({

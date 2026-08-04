@@ -53,6 +53,12 @@ export default async function HomePage() {
               >
                 Painel admin
               </Link>
+              <Link
+                href="/dashboard/roadmap"
+                className="rounded-2xl border border-white/15 bg-white/4 px-5 py-3 font-semibold text-white transition hover:bg-white/10"
+              >
+                Roadmap
+              </Link>
             </div>
           </div>
         </section>

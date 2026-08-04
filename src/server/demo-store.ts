@@ -35,8 +35,13 @@ export interface DemoOrderRecord {
   code: string;
   quantity: number;
   totalAmount: number;
+  discountAmount?: number | null;
   status: OrderStatus;
   numbers: string[];
+  paymentMethod?: string | null;
+  paymentId?: string | null;
+  pixCode?: string | null;
+  expiresAt?: string | null;
   createdAt: string;
 }
 
@@ -48,6 +53,8 @@ export interface DemoRoletaRecord {
   quantity: number;
   used: number;
   available: number;
+  prizesWon?: string[] | null;
+  expiresAt?: string | null;
   createdAt: string;
 }
 
@@ -186,6 +193,382 @@ export function getDemoState() {
   }
 
   return globalForDemo.demoState;
+}
+
+export function getDemoUserRecord() {
+  return getDemoState().user;
+}
+
+function asDate(value: string) {
+  return new Date(value);
+}
+
+function asNullableDate(value?: string | null) {
+  return value ? new Date(value) : null;
+}
+
+export function listDemoCampaignRecords() {
+  return getDemoState().campaigns.map((campaign) => ({
+    ...campaign,
+    createdAt: asDate(campaign.createdAt),
+    updatedAt: asDate(campaign.updatedAt),
+  }));
+}
+
+export function findDemoCampaignRecordById(id: string) {
+  const campaign = getDemoState().campaigns.find((item) => item.id === id) ?? null;
+
+  return campaign
+    ? {
+        ...campaign,
+        createdAt: asDate(campaign.createdAt),
+        updatedAt: asDate(campaign.updatedAt),
+      }
+    : null;
+}
+
+export function findDemoCampaignRecordBySlug(slug: string) {
+  const campaign = getDemoState().campaigns.find((item) => item.slug === slug) ?? null;
+
+  return campaign
+    ? {
+        ...campaign,
+        createdAt: asDate(campaign.createdAt),
+        updatedAt: asDate(campaign.updatedAt),
+      }
+    : null;
+}
+
+export function incrementDemoCampaignSoldNumbers(campaignId: string, quantity: number) {
+  const campaign = findDemoCampaignRecordById(campaignId);
+
+  if (!campaign) {
+    return null;
+  }
+
+  const stateCampaign = getDemoState().campaigns.find((item) => item.id === campaignId);
+
+  if (stateCampaign) {
+    stateCampaign.soldNumbers += quantity;
+    stateCampaign.updatedAt = nowIso();
+  }
+
+  return {
+    ...campaign,
+    soldNumbers: campaign.soldNumbers + quantity,
+    updatedAt: new Date(),
+  };
+}
+
+export function incrementDemoCampaignPendingNumbers(campaignId: string, quantity: number) {
+  const campaign = findDemoCampaignRecordById(campaignId);
+
+  if (!campaign) {
+    return null;
+  }
+
+  const stateCampaign = getDemoState().campaigns.find((item) => item.id === campaignId);
+
+  if (stateCampaign) {
+    stateCampaign.pendingNumbers += quantity;
+    stateCampaign.updatedAt = nowIso();
+  }
+
+  return {
+    ...campaign,
+    pendingNumbers: campaign.pendingNumbers + quantity,
+    updatedAt: new Date(),
+  };
+}
+
+export function settleDemoCampaignPurchase(campaignId: string, quantity: number) {
+  const stateCampaign = getDemoState().campaigns.find((item) => item.id === campaignId);
+
+  if (!stateCampaign) {
+    return null;
+  }
+
+  stateCampaign.pendingNumbers = Math.max(0, stateCampaign.pendingNumbers - quantity);
+  stateCampaign.soldNumbers += quantity;
+  stateCampaign.updatedAt = nowIso();
+
+  return {
+    ...stateCampaign,
+    createdAt: asDate(stateCampaign.createdAt),
+    updatedAt: asDate(stateCampaign.updatedAt),
+  };
+}
+
+export function releaseDemoCampaignPendingNumbers(campaignId: string, quantity: number) {
+  const stateCampaign = getDemoState().campaigns.find((item) => item.id === campaignId);
+
+  if (!stateCampaign) {
+    return null;
+  }
+
+  stateCampaign.pendingNumbers = Math.max(0, stateCampaign.pendingNumbers - quantity);
+  stateCampaign.updatedAt = nowIso();
+
+  return {
+    ...stateCampaign,
+    createdAt: asDate(stateCampaign.createdAt),
+    updatedAt: asDate(stateCampaign.updatedAt),
+  };
+}
+
+export function listDemoOrders() {
+  const state = getDemoState();
+
+  return state.orders
+    .slice()
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+    .map((order) => {
+      const campaign = state.campaigns.find((item) => item.id === order.campaignId);
+
+      return {
+        ...order,
+        discountAmount: order.discountAmount ?? null,
+        createdAt: asDate(order.createdAt),
+        expiresAt: asNullableDate(order.expiresAt),
+        user: {
+          id: state.user.id,
+          email: state.user.email,
+          name: state.user.name,
+        },
+        campaign: campaign
+          ? {
+              ...campaign,
+              createdAt: asDate(campaign.createdAt),
+              updatedAt: asDate(campaign.updatedAt),
+            }
+          : null,
+      };
+    });
+}
+
+export function createDemoOrder(input: {
+  userId: string;
+  campaignId: string;
+  code: string;
+  quantity: number;
+  totalAmount: number;
+  status: OrderStatus;
+  numbers: string[];
+  paymentMethod?: string | null;
+  paymentId?: string | null;
+  pixCode?: string | null;
+  expiresAt?: string | Date | null;
+}) {
+  const state = getDemoState();
+  const order = {
+    id: generateId(),
+    createdAt: nowIso(),
+    ...input,
+    discountAmount: null,
+    paymentMethod: input.paymentMethod ?? null,
+    paymentId: input.paymentId ?? null,
+    pixCode: input.pixCode ?? null,
+    expiresAt: input.expiresAt ? new Date(input.expiresAt).toISOString() : null,
+  };
+
+  state.orders.unshift(order);
+
+  return {
+    ...order,
+    createdAt: asDate(order.createdAt),
+  };
+}
+
+export function findDemoOrderByCode(code: string) {
+  const order = getDemoState().orders.find((entry) => entry.code === code) ?? null;
+
+  if (!order) {
+    return null;
+  }
+
+  const campaign = getDemoState().campaigns.find((item) => item.id === order.campaignId);
+
+  return {
+    ...order,
+    totalAmount: order.totalAmount,
+    discountAmount: order.discountAmount ?? null,
+    createdAt: asDate(order.createdAt),
+    expiresAt: asNullableDate(order.expiresAt),
+    user: {
+      id: getDemoState().user.id,
+      email: getDemoState().user.email,
+      name: getDemoState().user.name,
+    },
+    campaign: campaign
+      ? {
+          ...campaign,
+          createdAt: asDate(campaign.createdAt),
+          updatedAt: asDate(campaign.updatedAt),
+        }
+      : null,
+  };
+}
+
+export function updateDemoOrderByCode(
+  code: string,
+  patch: {
+    status?: OrderStatus;
+    paymentMethod?: string | null;
+    paymentId?: string | null;
+    pixCode?: string | null;
+    expiresAt?: string | Date | null;
+  },
+) {
+  const order = getDemoState().orders.find((entry) => entry.code === code);
+
+  if (!order) {
+    return null;
+  }
+
+  Object.assign(order, patch);
+
+  if (patch.expiresAt !== undefined) {
+    order.expiresAt = patch.expiresAt ? new Date(patch.expiresAt).toISOString() : null;
+  }
+
+  return {
+    ...order,
+    createdAt: asDate(order.createdAt),
+    expiresAt: asNullableDate(order.expiresAt),
+  };
+}
+
+export function listDemoAvailableRoletasByUser(userId: string) {
+  return getDemoState()
+    .roletas.filter((roleta) => roleta.userId === userId && roleta.available > 0)
+    .slice()
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+    .map((roleta) => ({
+      ...roleta,
+      createdAt: asDate(roleta.createdAt),
+      expiresAt: asNullableDate(roleta.expiresAt),
+      prizesWon: roleta.prizesWon ?? [],
+    }));
+}
+
+export function listDemoActivePrizes() {
+  return getDemoState()
+    .prizes.filter((prize) => prize.active)
+    .map((prize) => ({ ...prize }));
+}
+
+export function listDemoSpinHistoryByUser(userId: string) {
+  const state = getDemoState();
+
+  return state.spins
+    .filter((spin) => {
+      const roleta = state.roletas.find((entry) => entry.id === spin.roletaId);
+      return roleta?.userId === userId;
+    })
+    .slice()
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+    .map((spin) => {
+      const prize = state.prizes.find((entry) => entry.id === spin.prizeId);
+
+      return {
+        id: spin.id,
+        roletaId: spin.roletaId,
+        prizeId: spin.prizeId,
+        prizeName: prize?.name ?? 'Premio indisponivel',
+        prizeType: prize?.type ?? 'NONE',
+        prizeValue: prize?.value ?? 0,
+        createdAt: spin.createdAt,
+      };
+    });
+}
+
+export function findDemoNextAvailableRoletaByUser(userId: string) {
+  const roleta = getDemoState()
+    .roletas.slice()
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+    .find((entry) => entry.userId === userId && entry.available > 0);
+
+  return roleta
+    ? {
+        ...roleta,
+        createdAt: asDate(roleta.createdAt),
+        expiresAt: asNullableDate(roleta.expiresAt),
+        prizesWon: roleta.prizesWon ?? [],
+      }
+    : null;
+}
+
+export function grantDemoRoletas(input: {
+  userId: string;
+  orderId: string;
+  campaignId: string;
+  quantity: number;
+}) {
+  const state = getDemoState();
+  const roleta = {
+    id: generateId(),
+    userId: input.userId,
+    orderId: input.orderId,
+    campaignId: input.campaignId,
+    quantity: input.quantity,
+    used: 0,
+    available: input.quantity,
+    prizesWon: [],
+    expiresAt: null,
+    createdAt: nowIso(),
+  };
+
+  state.roletas.unshift(roleta);
+
+  return {
+    ...roleta,
+    createdAt: asDate(roleta.createdAt),
+    expiresAt: null,
+    prizesWon: roleta.prizesWon ?? [],
+  };
+}
+
+export function consumeDemoRoleta(roletaId: string) {
+  const roleta = getDemoState().roletas.find((entry) => entry.id === roletaId);
+
+  if (!roleta) {
+    return null;
+  }
+
+  roleta.available = Math.max(0, roleta.available - 1);
+  roleta.used += 1;
+
+  return {
+    ...roleta,
+    createdAt: asDate(roleta.createdAt),
+    expiresAt: asNullableDate(roleta.expiresAt),
+    prizesWon: roleta.prizesWon ?? [],
+  };
+}
+
+export function createDemoSpin(input: {
+  roletaId: string;
+  prizeId: string;
+}) {
+  const state = getDemoState();
+  const spin = {
+    id: String(state.spins.length + 1),
+    roletaId: input.roletaId,
+    prizeId: input.prizeId,
+    prizeName: '',
+    prizeType: 'NONE' as PrizeType,
+    prizeValue: 0,
+    createdAt: nowIso(),
+  };
+
+  state.spins.unshift(spin);
+
+  return {
+    id: state.spins.length,
+    customerRoletaId: input.roletaId,
+    prizeId: input.prizeId,
+    spinDate: new Date(spin.createdAt),
+  };
 }
 
 export function generateId() {
