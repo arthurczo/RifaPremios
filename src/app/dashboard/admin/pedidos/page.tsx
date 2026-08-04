@@ -19,12 +19,13 @@ export default async function AdminPedidosPage() {
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="font-semibold">{order.code}</h2>
-                  <p className="text-sm text-slate-400">
-                    {order.user.name} - {order.campaign?.name}
-                  </p>
+                  <p className="text-sm text-slate-400">{order.user.name} · {order.campaign?.name}</p>
                 </div>
                 <div className="text-sm text-slate-300">
-                  {order.status} - {order.quantity} numeros - R$ {order.totalAmount.toFixed(2)}
+                  <p>{order.status} · {order.quantity} numeros · R$ {order.totalAmount.toFixed(2)}</p>
+                  <p className="text-slate-400">
+                    {order.paymentMethod ? `Pagamento: ${order.paymentMethod}` : 'Pagamento nao vinculado'}
+                  </p>
                 </div>
               </div>
             </article>

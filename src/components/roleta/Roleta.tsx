@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface Prize {
   id: string;
@@ -249,6 +249,9 @@ export function Roleta({ available, history, onSpin }: RoletaProps) {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-center text-3xl font-black text-slate-950">Resultado do giro</DialogTitle>
+            <DialogDescription className="text-center text-sm text-muted-foreground">
+              Veja o premio recebido e feche para voltar ao painel.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 text-center">
             <div

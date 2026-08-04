@@ -32,8 +32,11 @@ export default async function AdminCampanhasPage() {
                   <h2 className="text-xl font-semibold">{campaign.name}</h2>
                   <p className="text-sm text-slate-400">/{campaign.slug}</p>
                 </div>
-                <div className="text-sm text-slate-300">
-                  R$ {campaign.price.toFixed(2)} por numero
+                <div className="text-right text-sm text-slate-300">
+                  <p>R$ {campaign.price.toFixed(2)} por numero</p>
+                  <p className="text-slate-400">
+                    {campaign.soldNumbers} vendidos · {campaign.pendingNumbers} pendentes
+                  </p>
                 </div>
               </div>
             </Link>
