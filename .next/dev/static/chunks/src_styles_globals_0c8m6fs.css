@@ -1260,10 +1260,6 @@
     background-image: linear-gradient(135deg, #f5c542, #d18d00);
   }
 
-  .bg-\[linear-gradient\(135deg\,rgba\(10\,18\,34\,0\.92\)\,rgba\(6\,12\,24\,0\.84\)\)\] {
-    background-image: linear-gradient(135deg, #0a1222eb, #060c18d6);
-  }
-
   .bg-\[linear-gradient\(135deg\,rgba\(10\,18\,34\,0\.94\)\,rgba\(6\,12\,24\,0\.88\)\)\] {
     background-image: linear-gradient(135deg, #0a1222f0, #060c18e0);
   }
@@ -1282,10 +1278,6 @@
 
   .bg-\[radial-gradient\(circle_at_top\,_rgba\(26\,48\,102\,0\.92\)\,_\#08111f_52\%\,_\#030712_100\%\)\] {
     background-image: radial-gradient(circle at top, #1a3066eb, #08111f 52%, #030712 100%);
-  }
-
-  .bg-\[radial-gradient\(circle_at_top\,_rgba\(26\,48\,102\,0\.92\)\,_\#08111f_55\%\,_\#030712_100\%\)\] {
-    background-image: radial-gradient(circle at top, #1a3066eb, #08111f 55%, #030712 100%);
   }
 
   .bg-clip-padding {
