@@ -1109,26 +1109,6 @@
     }
   }
 
-  .bg-slate-950\/40 {
-    background-color: #02061866;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-950\/40 {
-      background-color: color-mix(in oklab, var(--color-slate-950) 40%, transparent);
-    }
-  }
-
-  .bg-slate-950\/60 {
-    background-color: #02061899;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-950\/60 {
-      background-color: color-mix(in oklab, var(--color-slate-950) 60%, transparent);
-    }
-  }
-
   .bg-white\/4 {
     background-color: #ffffff0a;
   }
@@ -1297,10 +1277,6 @@
 
   .text-right {
     text-align: right;
-  }
-
-  .font-mono {
-    font-family: var(--font-mono);
   }
 
   .text-2xl {

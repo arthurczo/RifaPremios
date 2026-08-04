@@ -1,14 +1,7 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/auth/logout/route": "app/api/auth/logout/route.js",
   "/api/pedidos/route": "app/api/pedidos/route.js",
-  "/api/roleta/route": "app/api/roleta/route.js",
-  "/api/roleta/spin/route": "app/api/roleta/spin/route.js",
   "/auth/login/page": "app/auth/login/page.js",
   "/campanha/[slug]/page": "app/campanha/[slug]/page.js",
-  "/dashboard/admin/campanhas/[id]/page": "app/dashboard/admin/campanhas/[id]/page.js",
-  "/dashboard/admin/campanhas/page": "app/dashboard/admin/campanhas/page.js",
-  "/dashboard/minhas-roletas/page": "app/dashboard/minhas-roletas/page.js",
   "/page": "app/page.js"
 }
