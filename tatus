@@ -1,0 +1,18 @@
+* [33mf6285e2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fix: polir dashboards e modal da roleta
+* [33me454dac[m feat: integrar checkout Mercado Pago e fallback demo
+*   [33m00f82e5[m[33m ([m[1;31morigin/main[m[33m)[m Merge branch 'main' of https://github.com/arthurczo/RifaPremios
+[32m|[m[33m\[m  
+[32m|[m * [33m5633255[m Revise README for clarity and project details
+* [33m|[m [33m3122e4b[m Versão da feature config adicionada na main
+* [33m|[m   [33m536483f[m Merge branch 'config'
+[33m|[m[35m\[m [33m\[m  
+[33m|[m [35m|[m[33m/[m  
+[33m|[m[33m/[m[35m|[m   
+[33m|[m * [33mb0892e0[m[33m ([m[1;32mconfig[m[33m)[m New implementations
+[33m|[m * [33ma1a1db3[m Versão 1.1, implementações básicas com persistencia de dados. Criação das páginas principais e do funcionamento inicial do projeto
+[33m|[m * [33md27eea0[m Versão 1.0, implementações básicas com persistencia de dados. Criação das páginas principais e do funcionamento inicial do projeto
+[33m|[m * [33m391edce[m Alterações de configurações, testes de rotas, utilização de inserções no banco de dados para verificação do funcionamento da roleta e implementação do seed.js/ts
+[33m|[m * [33m34a5ac8[m[33m ([m[1;32mmaster[m[33m)[m Versão inicial/esqueletobase do projeto
+* [33mb3c499c[m Revise database service and clean up README
+* [33mfb2c211[m Update README with project details and setup instructions
+* [33m28ce7ab[m Initial commit

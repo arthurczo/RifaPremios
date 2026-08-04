@@ -1,4 +1,4 @@
-import { getDemoAuthUser } from '@/modules/auth/service';
+import { requireSessionUser } from '@/modules/auth/service';
 import { campaignsRepository } from '@/modules/campaigns/repository';
 import { ordersRepository } from '@/modules/orders/repository';
 import { calculateRoletasEarned, grantRoletasForOrder } from '@/modules/roleta/service';
@@ -13,7 +13,7 @@ export async function listOrdersByCampaign(campaignId: string) {
 }
 
 export async function createOrderForCurrentUser(campaignId: string, quantity: number) {
-  const user = await getDemoAuthUser();
+  const user = await requireSessionUser();
   const campaign = await campaignsRepository.findById(campaignId);
 
   if (!campaign) {

@@ -1,19 +1,24 @@
 import type { Metadata } from 'next';
-import '../styles/globals.css';   // ← caminho relativo a partir de src/app
+import type { ReactNode } from 'react';
+
+import '../styles/globals.css';
 
 export const metadata: Metadata = {
-    title: 'Rifa Premios',
-    description: 'Plataforma de rifas',
+  title: {
+    default: 'Rifa Premios',
+    template: '%s | Rifa Premios',
+  },
+  description: 'Plataforma de rifas com checkout Mercado Pago, cadastro e roletas.',
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: {
-    children: React.ReactNode;
+  children,
+}: {
+  children: ReactNode;
 }) {
-    return (
-        <html lang="pt-BR">
-        <body>{children}</body>
-        </html>
-    );
+  return (
+    <html lang="pt-BR">
+      <body className="bg-slate-950 text-white antialiased">{children}</body>
+    </html>
+  );
 }

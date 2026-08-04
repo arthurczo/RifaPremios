@@ -1,3 +1,5 @@
+import { hashPassword } from '@/lib/password';
+
 export type CampaignStatus = 'ACTIVE' | 'PAUSED' | 'FINISHED';
 export type OrderStatus = 'PENDING' | 'PAID' | 'CANCELLED' | 'EXPIRED';
 export type PrizeType = 'DISCOUNT_PERCENT' | 'DISCOUNT_FIXED' | 'FREE_NUMBERS' | 'NONE';
@@ -26,6 +28,10 @@ export interface DemoUserRecord {
   id: string;
   email: string;
   name: string;
+  passwordHash: string;
+  isAdmin: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface DemoOrderRecord {
@@ -101,6 +107,10 @@ function createInitialState(): DemoState {
     id: 'user-demo',
     email: 'teste@teste.com',
     name: 'Usuario Demo',
+    passwordHash: hashPassword('senha123'),
+    isAdmin: true,
+    createdAt,
+    updatedAt: createdAt,
   };
 
   const campaigns: DemoCampaignRecord[] = [
@@ -197,6 +207,53 @@ export function getDemoState() {
 
 export function getDemoUserRecord() {
   return getDemoState().user;
+}
+
+export function findDemoUserByEmail(email: string) {
+  const user = getDemoState().user;
+
+  return user.email.toLowerCase() === email.toLowerCase()
+    ? { ...user, createdAt: asDate(user.createdAt), updatedAt: asDate(user.updatedAt) }
+    : null;
+}
+
+export function findDemoUserById(id: string) {
+  const user = getDemoState().user;
+
+  return user.id === id
+    ? { ...user, createdAt: asDate(user.createdAt), updatedAt: asDate(user.updatedAt) }
+    : null;
+}
+
+export function createDemoUser(input: {
+  name: string;
+  email: string;
+  passwordHash: string;
+}) {
+  const state = getDemoState();
+
+  if (state.user.email.toLowerCase() === input.email.toLowerCase()) {
+    throw new Error('Email ja cadastrado');
+  }
+
+  const now = nowIso();
+  const user: DemoUserRecord = {
+    id: generateId(),
+    name: input.name,
+    email: input.email.toLowerCase(),
+    passwordHash: input.passwordHash,
+    isAdmin: false,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  state.user = user;
+
+  return {
+    ...user,
+    createdAt: asDate(user.createdAt),
+    updatedAt: asDate(user.updatedAt),
+  };
 }
 
 function asDate(value: string) {

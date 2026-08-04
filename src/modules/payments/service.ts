@@ -1,4 +1,4 @@
-import { getDemoAuthUser } from '@/modules/auth/service';
+import { requireSessionUser } from '@/modules/auth/service';
 import { campaignsRepository } from '@/modules/campaigns/repository';
 import { ordersRepository } from '@/modules/orders/repository';
 import { calculateRoletasEarned, grantRoletasForOrder } from '@/modules/roleta/service';
@@ -48,7 +48,7 @@ function normalizePaymentStatus(status?: string | null) {
 }
 
 export async function createMercadoPagoCheckoutForCurrentUser(input: CheckoutRequest): Promise<CheckoutResult> {
-  const user = await getDemoAuthUser();
+  const user = await requireSessionUser();
   const campaign = await campaignsRepository.findById(input.campaignId);
 
   if (!campaign) {

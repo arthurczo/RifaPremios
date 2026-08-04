@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { CompraBilhetes } from '@/components/campanha/CompraBilhetes';
 import { RoletasSection } from '@/components/campanha/RoletasSection';
+import { getSessionUser } from '@/lib/auth';
 import { getCampaignBySlug } from '@/modules/campaigns/service';
 
 export const dynamic = 'force-dynamic';
@@ -14,11 +15,14 @@ interface CampaignPageProps {
 export default async function CampaignPage({ params }: CampaignPageProps) {
   const { slug } = await params;
 
+  const user = await getSessionUser();
   const campaign = await getCampaignBySlug(slug);
 
   if (!campaign) {
     notFound();
   }
+
+  const nextPath = `/campanha/${campaign.slug}`;
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-10 text-white">
@@ -45,6 +49,9 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
           minPurchase={campaign.minPurchase}
           maxPurchase={campaign.maxPurchase}
           roletaEnabled={campaign.roletaEnabled}
+          isAuthenticated={Boolean(user)}
+          loginHref={`/auth/login?next=${encodeURIComponent(nextPath)}`}
+          registerHref={`/auth/register?next=${encodeURIComponent(nextPath)}`}
         />
       </div>
     </main>

@@ -1,25 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { AUTH_COOKIE_NAME, authenticateUser } from '@/lib/auth';
+import { AUTH_COOKIE_NAME, registerUser } from '@/lib/auth';
 
-const loginSchema = z.object({
+const registerSchema = z.object({
+  name: z.string().trim().min(2, 'Nome obrigatorio'),
   email: z.string().trim().email('Email invalido'),
-  password: z.string().min(1, 'Senha obrigatoria'),
+  password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres'),
 });
 
 export async function POST(request: NextRequest) {
   try {
-    const payload = loginSchema.parse(await request.json());
-    const user = await authenticateUser(payload.email, payload.password);
-    const response = NextResponse.json({
-      ok: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
+    const payload = registerSchema.parse(await request.json());
+    const user = await registerUser(payload);
+    const response = NextResponse.json(
+      {
+        ok: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        },
       },
-    });
+      { status: 201 },
+    );
 
     response.cookies.set(AUTH_COOKIE_NAME, user.id, {
       httpOnly: true,
@@ -37,11 +41,7 @@ export async function POST(request: NextRequest) {
         ? error.message
         : 'Erro interno';
 
-    const status = error instanceof z.ZodError
-      ? 400
-      : message === 'Credenciais invalidas'
-        ? 401
-        : 500;
+    const status = error instanceof z.ZodError || message === 'Email ja cadastrado' ? 400 : 500;
     return NextResponse.json({ error: message }, { status });
   }
 }

@@ -1,6 +1,5 @@
 {
   "version": 3,
   "sources": [],
-  "sections": [
-    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Arthurczo/WebstormProjects/RifaPremios/src/app/page.tsx"],"sourcesContent":["export default function HomePage() {\r\n    return (\r\n        <div className=\"min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-700\">\r\n            <div className=\"text-center\">\r\n                <h1 className=\"text-5xl font-bold text-white mb-4\">\r\n                    🎰 Fiori Premios\r\n                </h1>\r\n                <p className=\"text-xl text-white/80 mb-8\">\r\n                    Rifas e Roletas Premiadas\r\n                </p>\r\n                <a\r\n                    href=\"/dashboard/minhas-roletas\"\r\n                    className=\"inline-block px-6 py-3 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-100 transition\"\r\n                >\r\n                    Minhas Roletas →\r\n                </a>\r\n            </div>\r\n        </div>\r\n    );\r\n}"],"names":["HomePage","className","href"],"mappings":";;;;;;AAAe,SAASA;IACpB,qBACI,8OAAC;QAAIC,WAAU;kBACX,cAAA,8OAAC;YAAIA,WAAU;;8BACX,8OAAC;oBAAGA,WAAU;8BAAqC;;;;;;8BAGnD,8OAAC;oBAAEA,WAAU;8BAA6B;;;;;;8BAG1C,8OAAC;oBACGC,MAAK;oBACLD,WAAU;8BACb;;;;;;;;;;;;;;;;;AAMjB"}}]
+  "sections": []
 }

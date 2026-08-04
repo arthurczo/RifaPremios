@@ -24,7 +24,11 @@ export async function POST(request: NextRequest) {
         ? error.message
         : 'Erro interno';
 
-    const status = error instanceof z.ZodError ? 400 : 500;
+    const status = error instanceof z.ZodError
+      ? 400
+      : message === 'Login necessario para continuar'
+        ? 401
+        : 500;
     return NextResponse.json({ error: message }, { status });
   }
 }

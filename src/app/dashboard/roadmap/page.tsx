@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowLeft, CheckSquare2, Square } from 'lucide-react';
 
 import { roadmapPhases } from '@/lib/roadmap';
+import { APP_VERSION } from '@/lib/version';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,8 +15,9 @@ export default function RoadmapPage() {
             <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/70">Plano de entrega</p>
             <h1 className="mt-2 text-4xl font-black tracking-tight">Roadmap</h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-300">
-              A base de execução já está estável. O próximo foco é MercadoPago e, depois, a preparação para multi-tenant.
+              A base de execucao ja esta estavel. O foco agora e validar pagamento, UX e o caminho para multi-tenant.
             </p>
+            <p className="mt-3 text-xs uppercase tracking-[0.18em] text-slate-500">Versao {APP_VERSION}</p>
           </div>
 
           <Link

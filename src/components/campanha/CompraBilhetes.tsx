@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArrowRight, BadgeInfo, CreditCard, QrCode, ShoppingCart } from 'lucide-react';
 
@@ -11,6 +12,9 @@ interface CompraBilhetesProps {
   minPurchase: number;
   maxPurchase: number;
   roletaEnabled: boolean;
+  isAuthenticated: boolean;
+  loginHref: string;
+  registerHref: string;
 }
 
 export function CompraBilhetes({
@@ -19,6 +23,9 @@ export function CompraBilhetes({
   minPurchase,
   maxPurchase,
   roletaEnabled,
+  isAuthenticated,
+  loginHref,
+  registerHref,
 }: CompraBilhetesProps) {
   const [quantity, setQuantity] = useState(Math.max(minPurchase, PURCHASE_OPTIONS[0]));
   const [loading, setLoading] = useState(false);
@@ -69,6 +76,11 @@ export function CompraBilhetes({
       const data = await res.json();
 
       if (!res.ok) {
+        if (res.status === 401) {
+          window.location.assign(loginHref);
+          return;
+        }
+
         throw new Error(data.error || 'Nao foi possivel criar o checkout');
       }
 
@@ -96,6 +108,29 @@ export function CompraBilhetes({
       <p className="mt-3 text-sm text-slate-300">
         O pedido entra como pendente e e liberado automaticamente quando o Mercado Pago confirmar o pagamento.
       </p>
+
+      {!isAuthenticated ? (
+        <div className="mt-5 rounded-2xl border border-amber-300/15 bg-amber-300/10 p-4 text-sm text-amber-50">
+          <p className="font-semibold">Entre para concluir a compra</p>
+          <p className="mt-1 text-amber-50/80">
+            A plataforma exige sessao para registrar o pedido, acompanhar o pagamento e liberar roletas.
+          </p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href={loginHref}
+              className="inline-flex items-center justify-center rounded-2xl bg-amber-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-amber-300"
+            >
+              Entrar
+            </Link>
+            <Link
+              href={registerHref}
+              className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-4 py-3 font-semibold text-white transition hover:bg-white/10"
+            >
+              Criar conta
+            </Link>
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/35 p-4">
         <div className="flex items-center justify-between gap-3">
@@ -176,15 +211,25 @@ export function CompraBilhetes({
       {error ? <p className="mt-4 rounded-2xl bg-red-500/10 p-4 text-sm text-red-100">{error}</p> : null}
       {message ? <p className="mt-4 rounded-2xl bg-emerald-400/10 p-4 text-sm text-emerald-100">{message}</p> : null}
 
-      <button
-        type="button"
-        onClick={handlePurchase}
-        disabled={loading || !isQuantityValid}
-        className="mt-6 inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#f5c542,#d18d00)] px-4 py-3 font-semibold text-slate-950 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {loading ? 'Abrindo checkout...' : 'Pagar com Mercado Pago'}
-        <ArrowRight className="h-4 w-4" />
-      </button>
+      {isAuthenticated ? (
+        <button
+          type="button"
+          onClick={handlePurchase}
+          disabled={loading || !isQuantityValid}
+          className="mt-6 inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#f5c542,#d18d00)] px-4 py-3 font-semibold text-slate-950 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? 'Abrindo checkout...' : 'Pagar com Mercado Pago'}
+          <ArrowRight className="h-4 w-4" />
+        </button>
+      ) : (
+        <Link
+          href={loginHref}
+          className="mt-6 inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#f5c542,#d18d00)] px-4 py-3 font-semibold text-slate-950 transition hover:brightness-105"
+        >
+          Entrar para continuar
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      )}
 
       <p className="mt-3 flex items-center gap-2 text-xs text-slate-400">
         <CreditCard className="h-4 w-4" />

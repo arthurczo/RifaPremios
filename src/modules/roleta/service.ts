@@ -1,13 +1,13 @@
-import { getDemoAuthUser } from '@/modules/auth/service';
+import { requireSessionUser } from '@/modules/auth/service';
 import { roletaRepository } from '@/modules/roleta/repository';
 
 export async function listAvailableRoletasForCurrentUser() {
-  const user = await getDemoAuthUser();
+  const user = await requireSessionUser();
   return roletaRepository.listAvailableByUser(user.id);
 }
 
 export async function listSpinHistory() {
-  const user = await getDemoAuthUser();
+  const user = await requireSessionUser();
   return roletaRepository.listSpinHistoryByUser(user.id);
 }
 
@@ -37,7 +37,7 @@ export async function grantRoletasForOrder(input: {
 }
 
 export async function spinCurrentUserRoleta() {
-  const user = await getDemoAuthUser();
+  const user = await requireSessionUser();
   const roleta = await roletaRepository.findNextAvailableByUser(user.id);
 
   if (!roleta) {

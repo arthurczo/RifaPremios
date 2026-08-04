@@ -1,15 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FormEvent, useState } from 'react';
+import { ShieldCheck, Sparkles } from 'lucide-react';
 
 import { DEMO_USER_EMAIL } from '@/lib/constants';
+import { APP_VERSION } from '@/lib/version';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState(DEMO_USER_EMAIL);
-  const [password, setPassword] = useState('senha123');
+  const searchParams = useSearchParams();
+  const nextPath = searchParams.get('next');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -30,11 +34,6 @@ export default function LoginPage() {
         throw new Error(data.error || 'Falha no login');
       }
 
-      const nextPath =
-        typeof window !== 'undefined'
-          ? new URLSearchParams(window.location.search).get('next')
-          : null;
-
       router.push(nextPath || '/');
       router.refresh();
     } catch (requestError) {
@@ -45,11 +44,20 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(26,48,102,0.92),_#08111f_55%,_#030712_100%)] px-6 py-12 text-white">
-      <div className="w-full max-w-md rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(10,18,34,0.92),rgba(6,12,24,0.84))] p-8 shadow-2xl backdrop-blur">
-        <h1 className="text-3xl font-bold">Login</h1>
-        <p className="mt-2 text-sm text-slate-300">
-          Acesse a area autenticada para acompanhar roletas, historico de giros e operacoes administrativas basicas.
+    <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(19,33,66,0.95),_#08111f_55%,_#030712_100%)] px-6 py-12 text-white">
+      <div className="w-full max-w-md rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(10,18,34,0.94),rgba(6,12,24,0.88))] p-8 shadow-2xl backdrop-blur">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm uppercase tracking-[0.22em] text-cyan-200/70">Acesso seguro</p>
+            <h1 className="mt-2 text-3xl font-bold">Entrar</h1>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-cyan-100">
+            <ShieldCheck className="h-5 w-5" />
+          </div>
+        </div>
+
+        <p className="mt-3 text-sm text-slate-300">
+          Entre para concluir compras, acompanhar roletas e operar o painel da plataforma.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -58,6 +66,8 @@ export default function LoginPage() {
             <input
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              autoComplete="email"
+              inputMode="email"
               className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 outline-none transition focus:border-amber-300"
             />
           </label>
@@ -68,6 +78,7 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              autoComplete="current-password"
               className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 outline-none transition focus:border-amber-300"
             />
           </label>
@@ -84,12 +95,16 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-6 rounded-2xl border border-white/8 bg-slate-900/70 p-4 text-sm text-slate-200">
-          <p className="font-medium text-white">Acesso de demonstracao</p>
+          <p className="flex items-center gap-2 font-medium text-white">
+            <Sparkles className="h-4 w-4 text-amber-300" />
+            Acesso de demonstracao
+          </p>
           <p className="mt-2">Email: {DEMO_USER_EMAIL}</p>
           <p>Senha: senha123</p>
+          <p className="mt-3 text-xs uppercase tracking-[0.18em] text-slate-400">Versao {APP_VERSION}</p>
         </div>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/" className="rounded-xl border border-white/20 px-4 py-2 font-semibold">
             Ir para inicio
           </Link>
